@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOP 生產查詢系統 (手機版)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --px: #003580; --c4: #ed1c24; --cs: #0071ce; --ts: #008a4b;
+            --bn: #1a6e3c; --bno: #5a2d82;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 標題區 */
+        .app-header {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 搜尋選擇區 */
+        .search-container {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            height: 48px; /* 加大高度方便手機點擊 */
+            margin-bottom: 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 16px; /* 防止 iOS 自動放大 */
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+
+        /* SOP 卡片 */
+        .sop-card {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .sop-header {
+            padding: 15px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+        }
+
+        .sop-body { padding: 15px; }
+
+        /* 規格表格 */
+        .spec-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .spec-item {
+            background: #fff;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .spec-label { color: #888; font-size: 0.8em; margin-bottom: 3px; }
+        .spec-value { font-weight: bold; color: #333; }
+
+        /* 清單樣式 */
+        .list-section { margin-bottom: 15px; }
+        .list-title {
+            font-size: 1em;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 8px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        ul { margin: 0; padding-left: 20px; color: #444; }
+        li { margin-bottom: 5px; }
+
+        /* 計算器 */
+        .calc-area {
+            background: #fdf6e3;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #eee8d5;
+        }
+
+        .calc-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            width: 100%;
+            height: 48px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .calc-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #27ae60;
+        }
+
+        .result-kg { font-size: 0.9em; color: #888; display: block; margin-bottom: 4px; }
+        .result-box { font-size: 1.8em; font-weight: bold; color: #27ae60; display: block; }
+
+        /* 折疊圖片 */
+        .acc-wrap {
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .acc-btn {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #eef2f7;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        .acc-arrow { transition: transform 0.2s; font-style: normal; }
+        .acc-arrow.open { transform: rotate(180deg); }
+        .acc-body { display: none; padding: 10px; text-align: center; background: #fafafa; }
+        .acc-body.open { display: block; }
+        .acc-body img { width: 100%; border-radius: 8px; cursor: pointer; object-fit: contain; }
+        .acc-label { font-size: 0.8em; color: #555; margin-top: 6px; line-height: 1.5; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <div style="font-size: 0.8em; opacity: 0.8;">生產現場作業指導</div>
+    <div style="font-size: 1.3em; font-weight: bold; letter-spacing: 1px;">SOP 檢索系統</div>
+</div>
+
+<div class="search-container">
+    <label>🔍 快速搜尋 (品項/通路/簡稱)</label>
+    <input type="text" id="keyword" placeholder="輸入關鍵字..." oninput="search()">
+
+    <label>📂 通路分類</label>
+    <select id="channel" onchange="updateProducts()">
+        <option value="">-- 選擇通路 --</option>
+        <option value="PX">全聯 (PX)</option>
+        <option value="C4">家樂福 (C4)</option>
+        <option value="CS">好市多 (CS)</option>
+        <option value="TS">台朔 / 其他</option>
+        <option value="BN">北農</option>
+        <option value="BNO">北農有機</option>
+    </select>
+
+    <label>🍄 選擇品項</label>
+    <select id="product" onchange="showSOP()">
+        <option value="">-- 請先選擇上方 --</option>
+    </select>
+</div>
+
+<div id="sopCard" class="sop-card">
+    <div id="hBg" class="sop-header">
+        <span id="hName">品項名稱</span>
+        <span id="hTag" class="tag">通路</span>
+    </div>
+    
+    <div class="sop-body">
+        <div class="spec-table">
+            <div class="spec-item"><div class="spec-label">盒型</div><div id="sBox" class="spec-value">-</div></div>
+            <div class="spec-item"><div class="spec-label">收箱</div><div id="sPack" class="spec-value">-</div></div>
+            <div class="spec-item"><div class="spec-label">淨重標準</div><div id="sWeight" class="spec-value">-</div></div>
+            <div class="spec-item"><div class="spec-label" id="sCalcLabel">計算基準</div><div id="sCalc" class="spec-value">-</div></div>
+        </div>
+
+        <div id="acc1" class="acc-wrap" style="display:none;">
+            <button class="acc-btn" onclick="toggleAcc('acc1')">
+                <span id="accTitle1">成品圖</span><span class="acc-arrow">▼</span>
+            </button>
+            <div class="acc-body">
+                <img id="img1" onclick="openImg(this.src)" title="點擊全螢幕">
+                <div id="imgLabel1" class="acc-label"></div>
+            </div>
+        </div>
+
+        <div class="list-section">
+            <div class="list-title">📦 原料規格</div>
+            <ul id="lRaw"></ul>
+        </div>
+
+        <div class="list-section">
+            <div class="list-title">🔄 生產產出處理</div>
+            <ul id="lOut"></ul>
+        </div>
+
+        <div id="acc2" class="acc-wrap" style="display:none;">
+            <button class="acc-btn" onclick="toggleAcc('acc2')">
+                <span id="accTitle2">收箱圖</span><span class="acc-arrow">▼</span>
+            </button>
+            <div class="acc-body">
+                <img id="img2" onclick="openImg(this.src)" title="點擊全螢幕">
+                <div id="imgLabel2" class="acc-label"></div>
+            </div>
+        </div>
+
+        <div id="acc3" class="acc-wrap" style="display:none;">
+            <button class="acc-btn" onclick="toggleAcc('acc3')">
+                <span id="accTitle3">收箱圖</span><span class="acc-arrow">▼</span>
+            </button>
+            <div class="acc-body">
+                <img id="img3" onclick="openImg(this.src)" title="點擊全螢幕">
+                <div id="imgLabel3" class="acc-label"></div>
+            </div>
+        </div>
+
+        <div id="noteArea" class="list-section" style="display:none; color: #d63031;">
+            <div class="list-title">💡 特別提醒</div>
+            <p id="tNote" style="margin: 5px 0 0 0; font-weight: bold;"></p>
+        </div>
+
+        <div class="calc-area">
+            <label style="color: #856404;">🧮 本批產量試算</label>
+            <input type="number" id="numCount" inputmode="decimal" placeholder="請輸入總盒數" onkeydown="if(event.key==='Enter') doCalc()">
+            <button class="calc-btn" onclick="doCalc()">點我計算重量</button>
+            <div id="resDiv" class="calc-result" style="display:none;">
+                <span id="resKg" class="result-kg">0 KG</span>
+                <span id="resBox" class="result-box">0 件 + 0 盒</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 資料庫 (可自行增加)
+const db = [
+    { id:1, ch:"PX", sub:"素茵", name:"PX三面封杏鮑 (素茵)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝有機杏鮑菇B → 9KG/件","杏鮑菇B → 3KG/包","杏盒180G/盒 → 半成品 需秤重族才可以包裝"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
+        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
+        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
+      ],
+      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
+            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
+            "整件：寫「件數」。",
+            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`},
+    { id:2, ch:"PX", sub:"素茵", name:"PX三面封秀珍(素茵)", box:"秀盒", pack:50, w:"150-160G", cw:160, raw:["散裝秀珍 18KG/件"], note:"" },
+    { id:11, ch:"PX", sub:"素茵", name:"PX三面封木耳(素茵)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝木耳 18KG/件"], note:"" },
+    { id:3, ch:"C4", sub:"西螺", name:"C4西螺 杏鮑菇 400G", box:"托盤膜", pack:20, w:"400-420G", cw:420, raw:["大A原料"], note:"" },
+    { id:4, ch:"CS", sub:"好市多", name:"CS好市多 杏鮑 1KG", box:"拉鍊袋", pack:10, w:"1000G", cw:1020, raw:["特A級原料"], note:"嚴禁斷頭品" },
+    { id:5, ch:"BN", sub:"三面封", name:"PX三面封杏鮑(北農)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝有機杏鮑菇B → 9KG/件","杏鮑菇B → 3KG/包","杏盒180G/盒 → 半成品 需秤重族才可以包裝"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖", label:""}
+      ],
+      note:"",
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`},
+    { id:6, ch:"BN", sub:"三面封", name:"PX三面封秀珍(北農)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝杏鮑 18KG/件"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
+        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
+        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
+      ],
+      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
+            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
+            "整件：寫「件數」。",
+            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`},
+    { id:7, ch:"BN", sub:"三面封", name:"PX三面封木耳(北農)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝杏鮑 18KG/件"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
+        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
+        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
+      ],
+      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
+            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
+            "整件：寫「件數」。",
+            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`},
+    { id:8,  ch:"BNO", sub:"有機", name:"北農有機秀珍", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝杏鮑 18KG/件"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
+        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
+        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
+      ],
+      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
+            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
+            "整件：寫「件數」。",
+            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`},
+    { id:9,  ch:"BNO", sub:"有機", name:"北農有機木耳", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝杏鮑 18KG/件"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
+        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
+        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
+      ],
+      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
+            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
+            "整件：寫「件數」。",
+            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`},
+    { id:10, ch:"BNO", sub:"有機", name:"北農有機黑美", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝杏鮑 18KG/件"],
+      barcode:"4717048831836",
+      imgs:[
+        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
+        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
+        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
+      ],
+      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
+            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
+            "整件：寫「件數」。",
+            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
+      out:`<li>成品 → 入成品庫</li>
+<li>副產品
+  <ul>
+    <li>NG（透B）
+      <ul>
+        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
+        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li>聯產品
+  <ul>
+    <li>杏鮑菇B
+      <ul>
+        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
+      </ul>
+    </li>
+  </ul>
+</li>`}
+];
+
+const colors = { PX:"var(--px)", C4:"var(--c4)", CS:"var(--cs)", TS:"var(--ts)", BN:"var(--bn)", BNO:"var(--bno)" };
+
+function updateProducts() {
+    const ch = document.getElementById("channel").value;
+    const pSel = document.getElementById("product");
+    pSel.innerHTML = '<option value="">-- 選擇品項 --</option>';
+    db.filter(i => i.ch === ch).forEach(i => {
+        pSel.innerHTML += `<option value="${i.id}">[${i.sub}] ${i.name}</option>`;
+    });
+}
+
+function search() {
+    const k = document.getElementById("keyword").value.toLowerCase();
+    if(k.length < 1) return;
+    const pSel = document.getElementById("product");
+    pSel.innerHTML = '<option value="">-- 搜尋結果 --</option>';
+    db.filter(i => i.name.toLowerCase().includes(k) || i.sub.toLowerCase().includes(k)).forEach(i => {
+        pSel.innerHTML += `<option value="${i.id}">[${i.ch}-${i.sub}] ${i.name}</option>`;
+    });
+}
+
+let cur = null;
+function showSOP() {
+    const id = document.getElementById("product").value;
+    cur = db.find(i => i.id == id);
+    if(!cur) return;
+
+    document.getElementById("sopCard").style.display = "block";
+    document.getElementById("hBg").style.backgroundColor = colors[cur.ch];
+    document.getElementById("hName").textContent = cur.name;
+    document.getElementById("hTag").textContent = cur.ch + "-" + cur.sub;
+    document.getElementById("sBox").textContent = cur.box;
+    document.getElementById("sPack").textContent = cur.pack + " 盒/件";
+    document.getElementById("sWeight").textContent = cur.w;
+    if(cur.barcode) {
+        document.getElementById("sCalcLabel").textContent = "條碼";
+        document.getElementById("sCalc").textContent = cur.barcode;
+    } else {
+        document.getElementById("sCalcLabel").textContent = "計算基準";
+        document.getElementById("sCalc").textContent = cur.noKg ? "-" : cur.cw + " G";
+    }
+    document.getElementById("lRaw").innerHTML = cur.raw.map(r => `<li>${r}</li>`).join("");
+    document.getElementById("lOut").innerHTML = cur.out || "<li>成品：入成品庫</li><li>NG/B級：寫日期／農民入庫</li>";
+
+    const nA = document.getElementById("noteArea");
+    const noteEl = document.getElementById("tNote");
+    if(cur.note && cur.note.length) {
+        nA.style.display = "block";
+        if(Array.isArray(cur.note)) {
+            noteEl.innerHTML = cur.note.map(n => `<div style="margin-bottom:5px;">• ${n}</div>`).join("");
+        } else {
+            noteEl.textContent = cur.note;
+        }
+    } else { nA.style.display = "none"; }
+
+    // 折疊圖片
+    [1,2,3].forEach(i => {
+        const acc   = document.getElementById("acc" + i);
+        const imgEl = document.getElementById("img" + i);
+        const lblEl = document.getElementById("imgLabel" + i);
+        const ttlEl = document.getElementById("accTitle" + i);
+        const item  = cur.imgs && cur.imgs[i-1];
+        if(item && item.src) {
+            imgEl.src = item.src;
+            lblEl.innerHTML = item.label ? item.label.replace(/\n/g,"<br>") : "";
+            if(ttlEl && item.title) ttlEl.textContent = item.title;
+            acc.style.display = "block";
+            acc.querySelector(".acc-body").classList.remove("open");
+            acc.querySelector(".acc-arrow").classList.remove("open");
+        } else {
+            acc.style.display = "none";
+        }
+    });
+
+    document.getElementById("resDiv").style.display = "none";
+}
+
+function toggleAcc(id) {
+    const wrap  = document.getElementById(id);
+    const body  = wrap.querySelector(".acc-body");
+    const arrow = wrap.querySelector(".acc-arrow");
+    const open  = body.classList.toggle("open");
+    arrow.classList.toggle("open", open);
+}
+
+function openImg(src) {
+    const ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:999;";
+    ov.innerHTML = `<img src="${src}" style="max-width:95%;max-height:90vh;border-radius:8px;">`;
+    ov.onclick = () => ov.remove();
+    document.body.appendChild(ov);
+}
+
+function doCalc() {
+    const count = Number(document.getElementById("numCount").value);
+    if(!count || !cur) return;
+    const c = Math.floor(count / cur.pack);
+    const r = count % cur.pack;
+    document.getElementById("resDiv").style.display = "block";
+    const kgEl = document.getElementById("resKg");
+    if(cur.noKg) {
+        kgEl.style.display = "none";
+    } else {
+        kgEl.style.display = "block";
+        kgEl.textContent = (count * cur.cw / 1000).toFixed(2) + " KG";
+    }
+    document.getElementById("resBox").textContent = `${c} 件 + ${r} 盒`;
+    document.getElementById("resBox").className = "result-box";
+    document.getElementById("resDiv").scrollIntoView({behavior: "smooth"});
+}
+</script>
+</body>
+</html>
