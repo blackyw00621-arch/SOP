@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git --version)",
       "Bash(gh --version)",
-      "Bash(git version:*)"
+      "Bash(git version:*)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
