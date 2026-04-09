@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PX三面封秀珍 (素茵) SOP</title>
+    <style>
+        :root { --color: #003580; --primary: #2c3e50; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0; padding: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 8px 14px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .sop-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .sop-header {
+            background-color: var(--color);
+            padding: 15px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tag {
+            background: rgba(255,255,255,0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+        }
+        .sop-body { padding: 15px; }
+        .spec-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .spec-item { background: #fff; padding: 10px; font-size: 0.9em; }
+        .spec-label { color: #888; font-size: 0.8em; margin-bottom: 3px; }
+        .spec-value { font-weight: bold; color: #333; }
+        .list-section { margin-bottom: 15px; }
+        .list-title {
+            font-size: 1em;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 8px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        ul { margin: 0; padding-left: 20px; color: #444; }
+        li { margin-bottom: 5px; }
+        .acc-wrap {
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .acc-btn {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #eef2f7;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        .acc-arrow { transition: transform 0.2s; }
+        .acc-arrow.open { transform: rotate(180deg); }
+        .acc-body { display: none; padding: 10px; text-align: center; background: #fafafa; }
+        .acc-body.open { display: block; }
+        .acc-body img { width: 100%; border-radius: 8px; cursor: pointer; object-fit: contain; }
+        .acc-label { font-size: 0.8em; color: #555; margin-top: 6px; line-height: 1.5; }
+        .calc-area {
+            background: #fdf6e3;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #eee8d5;
+        }
+        label { display: block; font-size: 0.9em; color: #666; margin-bottom: 5px; font-weight: bold; }
+        input[type=number] {
+            width: 100%; height: 48px;
+            margin-bottom: 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 16px;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+        .calc-btn {
+            background: #27ae60; color: white; border: none;
+            width: 100%; height: 48px; border-radius: 8px;
+            font-size: 1.1em; font-weight: bold; cursor: pointer;
+        }
+        .calc-result {
+            margin-top: 15px; padding: 15px;
+            background: white; border-radius: 8px;
+            text-align: center; border: 2px solid #27ae60;
+        }
+        .result-kg { font-size: 0.9em; color: #888; display: block; margin-bottom: 4px; }
+        .result-box { font-size: 1.8em; font-weight: bold; color: #27ae60; display: block; }
+    </style>
+</head>
+<body>
+
+<a class="back-btn" href="../index.html">← 返回主選單</a>
+
+<div class="sop-card">
+    <div class="sop-header">
+        <span>PX三面封秀珍 (素茵)</span>
+        <span class="tag">PX-素茵</span>
+    </div>
+    <div class="sop-body">
+
+        <div class="spec-table">
+            <div class="spec-item"><div class="spec-label">盒型</div><div class="spec-value">秀盒</div></div>
+            <div class="spec-item"><div class="spec-label">收箱</div><div class="spec-value">50 盒/件</div></div>
+            <div class="spec-item"><div class="spec-label">淨重標準</div><div class="spec-value">150-160G</div></div>
+            <div class="spec-item"><div class="spec-label">計算基準</div><div class="spec-value">160 G</div></div>
+        </div>
+
+        <!-- 成品圖 / 收箱圖 待補 -->
+
+        <div class="list-section">
+            <div class="list-title">📦 原料規格</div>
+            <ul>
+                <li>散裝秀珍 18KG/件</li>
+            </ul>
+        </div>
+
+        <div class="list-section">
+            <div class="list-title">🔄 生產產出處理</div>
+            <ul>
+                <li>成品：入成品庫</li>
+                <li>NG/B級：寫日期／農民入庫</li>
+            </ul>
+        </div>
+
+        <div class="calc-area">
+            <label style="color:#856404;">🧮 本批產量試算</label>
+            <input type="number" id="numCount" inputmode="decimal" placeholder="請輸入總盒數" onkeydown="if(event.key==='Enter') doCalc()">
+            <button class="calc-btn" onclick="doCalc()">點我計算重量</button>
+            <div id="resDiv" class="calc-result" style="display:none;">
+                <span id="resKg" class="result-kg"></span>
+                <span id="resBox" class="result-box"></span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const PACK = 50, CW = 160;
+function doCalc() {
+    const count = Number(document.getElementById("numCount").value);
+    if (!count) return;
+    const c = Math.floor(count / PACK), r = count % PACK;
+    document.getElementById("resKg").textContent = (count * CW / 1000).toFixed(2) + " KG";
+    document.getElementById("resBox").textContent = `${c} 件 + ${r} 盒`;
+    document.getElementById("resDiv").style.display = "block";
+    document.getElementById("resDiv").scrollIntoView({ behavior: "smooth" });
+}
+function toggleAcc(btn) {
+    const body  = btn.nextElementSibling;
+    const arrow = btn.querySelector(".acc-arrow");
+    const open  = body.classList.toggle("open");
+    arrow.classList.toggle("open", open);
+}
+function openImg(src) {
+    const ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:999;";
+    ov.innerHTML = `<img src="${src}" style="max-width:95%;max-height:90vh;border-radius:8px;">`;
+    ov.onclick = () => ov.remove();
+    document.body.appendChild(ov);
+}
+</script>
+</body>
+</html>

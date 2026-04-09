@@ -290,39 +290,8 @@
 <script>
 // 資料庫 (可自行增加)
 const db = [
-    { id:1, ch:"PX", sub:"素茵", name:"PX三面封杏鮑 (素茵)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝有機杏鮑菇B → 9KG/件","杏鮑菇B → 3KG/包","杏盒180G/盒 → 半成品 需秤重，足重才可以包裝"],
-      barcode:"4717048831836",
-      imgs:[
-        {src:"包裝成品照片.jpg", title:"📷 成品圖",   label:""},
-        {src:"收箱方法一.jpg",   title:"📦 收箱方法一", label:"收箱方法\n下層 6×4"},
-        {src:"收箱方法二.jpg",   title:"📦 收箱方法二", label:"收箱方法\n上層 6×4 最上層 2包"}
-      ],
-      note:["≤ 500 盒：用烏龜車，限疊 4 層。 貼標規範：統一貼在最上籃。",
-            "≥ 501 盒：用棧板（疊板）入庫。一板貼一張庫存貼。",
-            "整件：寫「件數」。",
-            "尾數：寫「盒數」，且最上籃須貼 2 張。"],
-      out:`<li>成品 → 入成品庫</li>
-<li>副產品
-  <ul>
-    <li>NG（透B）
-      <ul>
-        <li>3KG/包（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫公斤數</li>
-        <li>未滿3KG（綁<strong>白色</strong>束繩）→ NG貼紙勾選「NG」寫上實際公斤數</li>
-      </ul>
-    </li>
-  </ul>
-</li>
-<li>聯產品
-  <ul>
-    <li>杏鮑菇B
-      <ul>
-        <li>3KG包（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
-        <li>未滿3KG（綁<strong>紅色</strong>束繩）→ 貼紙勾選「杏B」寫日期／農民／公斤數</li>
-      </ul>
-    </li>
-  </ul>
-</li>`},
-    { id:2, ch:"PX", sub:"素茵", name:"PX三面封秀珍(素茵)", box:"秀盒", pack:50, w:"150-160G", cw:160, raw:["散裝秀珍 18KG/件"], note:"" },
+    { id:1, ch:"PX", sub:"素茵", name:"PX三面封杏鮑 (素茵)", url:"杏鮑素茵/" },
+    { id:2, ch:"PX", sub:"素茵", name:"PX三面封秀珍(素茵)", url:"秀珍素茵/" },
     { id:11, ch:"PX", sub:"素茵", name:"PX三面封木耳(素茵)", box:"803D透明盒", pack:50, w:"180-190G", cw:190, raw:["散裝木耳 18KG/件"], note:"" },
     { id:3, ch:"C4", sub:"西螺", name:"C4西螺 杏鮑菇 400G", box:"托盤膜", pack:20, w:"400-420G", cw:420, raw:["大A原料"], note:"" },
     { id:4, ch:"CS", sub:"好市多", name:"CS好市多 杏鮑 1KG", box:"拉鍊袋", pack:10, w:"1000G", cw:1020, raw:["特A級原料"], note:"嚴禁斷頭品" },
@@ -541,6 +510,7 @@ function showSOP() {
     const id = document.getElementById("product").value;
     cur = db.find(i => i.id == id);
     if(!cur) return;
+    if(cur.url) { window.location.href = cur.url; return; }
 
     document.getElementById("sopCard").style.display = "block";
     document.getElementById("hBg").style.backgroundColor = colors[cur.ch];
